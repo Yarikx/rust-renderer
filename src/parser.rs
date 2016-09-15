@@ -1,23 +1,28 @@
 use std::io::BufReader;
 use std::io::BufRead;
 use std::fs::File;
-use std::path::Path;
+use std::io;
 
-struct Vertex {
-    x: f32,
-    y: f32,
-    z: f32,
+pub struct Vertex {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
-struct Face {
-    ps: [u32; 3],
+pub struct Face {
+    pub ps: [u32; 3],
 }
 
-pub fn parse(filename: &'static str) {   
+pub struct Model {
+    pub vertices: Vec<Vertex>,
+    pub faces: Vec<Face>,
+}
+
+pub fn parse(filename: &'static str) -> io::Result<Model> {   
     let x = File::open(filename)
         .map(|file|  BufReader::new(file) );
 
-    match x {
+    return match x {
         Ok(file) => {
             let mut vertices = Vec::new();
             let mut faces = Vec::new();
@@ -43,13 +48,8 @@ pub fn parse(filename: &'static str) {
                     _ => {}
                 }
             }
-            for f in faces {
-                println!("{}, {}, {}", f.ps[0], f.ps[1], f.ps[2]);
-            }
+            Ok(Model {vertices: vertices, faces: faces})
         },
-        Error => println!("no")
-    }
-        
-    //let mut file = BufReader::new(&f);
-         
+        Err(x) => Err(x)
+    }   
 }

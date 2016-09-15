@@ -58,5 +58,12 @@ fn main() {
     let _    = image::ImageRgb8(imgbuf).save(fout, image::PNG);
 
     println!("done!");
-    parser::parse("african_head.obj");
+    match parser::parse("african_head.obj") {
+        Ok(model) => {
+            for f in model.faces {
+                println!("{}", f.ps[0])
+            }
+        },
+        Err(x) => println!("error: {}", x)
+    }
 }
