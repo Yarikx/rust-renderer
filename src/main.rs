@@ -60,8 +60,22 @@ fn main() {
     println!("done!");
     match parser::parse("african_head.obj") {
         Ok(model) => {
-            for f in model.faces {
-                println!("{}", f.ps[0])
+            let fs = model.faces;
+            let vs = model.vertices;
+            let w = WIDTH as f32;
+            let h = HEIGHT as f32;
+            for face in model.faces {
+                for i in 0..3 {
+                    let v1 = vs[fs[i]];
+                    let v2 = vs[fs[(i+1) % 3]];
+                    
+                    let x0 = (v0.x + 1.0) * w / 2.0;
+                    let y0 = (v0.y + 1.0) * h / 2.0;
+                    let x1 = (v1.x + 1.0) * w / 2.0;
+                    let y1 = (v1.y + 1.0) * h / 2.0;
+
+                    line(img, x0 as i32, y0 as i32, x1 as i32, y1 as i32, pix);
+                }
             }
         },
         Err(x) => println!("error: {}", x)
