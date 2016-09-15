@@ -10,7 +10,7 @@ pub struct Vertex {
 }
 
 pub struct Face {
-    pub ps: [u32; 3],
+    pub ps: [usize; 3],
 }
 
 pub struct Model {
@@ -40,10 +40,11 @@ pub fn parse(filename: &'static str) -> io::Result<Model> {
                             .map(|str| -> Vec<u32> {
                                 str.split("/")
                                     .filter_map(|s| s.parse::<u32>().ok())
+                                    .map(|x| x - 1)
                                     .collect::<Vec<_>>()
                             });
                         let vs = xs.map(|v| v[0]).collect::<Vec<u32>>();
-                        faces.push(Face{ps: [vs[0], vs[1], vs[2]]});
+                        faces.push(Face{ps: [vs[0] as usize, vs[1] as usize , vs[2] as usize]});
                     },
                     _ => {}
                 }

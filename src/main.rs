@@ -16,7 +16,7 @@ const HEIGHT: i32 = 800;
 
 fn pixel(img: &mut Image, x: i32, y: i32, color: Pixel) {
     if x >=0 && y >=0 && x < WIDTH && y < HEIGHT { 
-        img.put_pixel(x as u32, y as u32,color);
+        img.put_pixel(x as u32, (HEIGHT - y - 1) as u32,color);
     }
 }
 
@@ -43,41 +43,37 @@ fn main() {
     // Create a new ImgBuf with width: imgx and height: imgy
     let mut imgbuf = image::ImageBuffer::new(WIDTH as u32, HEIGHT as u32);
     let pix = image::Rgb([255, 255, 255]);
-    line(&mut imgbuf, 100, 100, 200, 900, pix);
-    
-    line(&mut imgbuf, 800, 100, 0, 0, pix);
-
-
-
-    
 
     // Save the image as “fractal.png”
     let ref mut fout = File::create(&Path::new("out.png")).unwrap();
-
-    // We must indicate the image’s color type and what format to save as
-    let _    = image::ImageRgb8(imgbuf).save(fout, image::PNG);
-
-    println!("done!");
+    
     match parser::parse("african_head.obj") {
         Ok(model) => {
-            let fs = model.faces;
-            let vs = model.vertices;
+            let ref fs = model.faces;
+            let ref vs = model.vertices;
             let w = WIDTH as f32;
             let h = HEIGHT as f32;
-            for face in model.faces {
+            for face in fs {
                 for i in 0..3 {
-                    let v1 = vs[fs[i]];
-                    let v2 = vs[fs[(i+1) % 3]];
+                    let v0 = &vs[face.ps[i]];
+                    let v1 = &vs[face.ps[(i+1) % 3]];
                     
                     let x0 = (v0.x + 1.0) * w / 2.0;
                     let y0 = (v0.y + 1.0) * h / 2.0;
                     let x1 = (v1.x + 1.0) * w / 2.0;
                     let y1 = (v1.y + 1.0) * h / 2.0;
 
-                    line(img, x0 as i32, y0 as i32, x1 as i32, y1 as i32, pix);
+                    line(&mut imgbuf, x0 as i32, y0 as i32, x1 as i32, y1 as i32, pix);
                 }
             }
         },
         Err(x) => println!("error: {}", x)
     }
+
+    
+
+    // We must indicate the image’s color type and what format to save as
+    let _    = image::ImageRgb8(imgbuf).save(fout, image::PNG);
+
+    println!("done!");
 }
