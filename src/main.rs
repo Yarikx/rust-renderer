@@ -5,6 +5,8 @@ use std::num;
 use std::fs::File;
 use std::path::Path;
 
+mod parser;
+
 type Pixel = image::Rgb<u8>;
 type Image = image::RgbImage;
 
@@ -56,4 +58,5 @@ fn main() {
     let _    = image::ImageRgb8(imgbuf).save(fout, image::PNG);
 
     println!("done!");
+    parser::parse("african_head.obj");
 }
