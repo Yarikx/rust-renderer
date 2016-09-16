@@ -18,11 +18,11 @@ pub struct Img {
 }
 
 trait MyVec {
-    fn asFloat(self) -> Vector2<f32>;
+    fn as_float(self) -> Vector2<f32>;
 }
 
 impl MyVec for Vector2<i32> {
-    fn asFloat(self) -> Vector2<f32> {
+    fn as_float(self) -> Vector2<f32> {
         Vector2::new(self.x as f32, self.y as f32)
     }
 }
@@ -83,11 +83,11 @@ impl Img {
             let tmp = if second_half {t1.y-t0.y} else {0};
             let beta = (i - tmp) as f32 / segment_height;
 
-            let a = t0.asFloat() + (t2 - t0).asFloat() * alpha;
+            let a = t0.as_float() + (t2 - t0).as_float() * alpha;
             let b = if second_half {
-                t1.asFloat() + (t2-t1).asFloat() * beta
+                t1.as_float() + (t2-t1).as_float() * beta
             } else {
-                t0.asFloat() + (t1-t0).asFloat() * beta
+                t0.as_float() + (t1-t0).as_float() * beta
             };
 
             let (a,b) = if a.x>b.x {(b,a)} else {(a,b)};
