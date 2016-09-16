@@ -13,8 +13,8 @@ use na::Cross;
 use na::Norm;
 use na::Dot;
 
-const WIDTH: u32 = 800;
-const HEIGHT: u32 = 800;
+const WIDTH: u32 = 1800;
+const HEIGHT: u32 = 1800;
 
 fn main() {
     let mut img = render::Img::create(WIDTH, HEIGHT);
@@ -42,7 +42,7 @@ fn main() {
                 let x2: Vector3<f32> = world_coords[1] - world_coords[0];
                 let n = x1.cross(&x2).normalize();
 
-                let ref light_dir = Vector3::new(0., 0., -1.);
+                let ref light_dir = Vector3::new(0., 0., -1.).normalize();
                 let intensity = n.dot(light_dir);
 
                 if intensity > 0. {
