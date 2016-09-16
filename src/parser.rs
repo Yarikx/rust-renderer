@@ -1,20 +1,18 @@
+extern crate nalgebra as na;
+
 use std::io::BufReader;
 use std::io::BufRead;
 use std::fs::File;
 use std::io;
 
-pub struct Vertex {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-}
+use na::Vector3;
 
 pub struct Face {
     pub ps: [usize; 3],
 }
 
 pub struct Model {
-    pub vertices: Vec<Vertex>,
+    pub vertices: Vec<Vector3<f32>>,
     pub faces: Vec<Face>,
 }
 
@@ -33,7 +31,7 @@ pub fn parse(filename: &'static str) -> io::Result<Model> {
                 match command {
                     "v" => {
                         let ps = itr.filter_map(|s| s.parse::<f32>().ok()).collect::<Vec<_>>();
-                        vertices.push(Vertex {x: ps[0], y: ps[1], z: ps[2]})
+                        vertices.push(Vector3::new(ps[0], ps[1], ps[2]))
                     },
                     "f" => {
                         let xs = itr
