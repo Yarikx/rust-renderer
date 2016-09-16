@@ -68,7 +68,6 @@ impl Img {
         let (t0,t1) = if t0.y>t1.y { (t1, t0)} else { (t0, t1) };
         let (t0,t2) = if t0.y>t2.y { (t2, t0)} else { (t0, t2) };
         let (t1,t2) = if t1.y>t2.y { (t2, t1)} else { (t1, t2) };
-        println!("{} {} {}", t0.y, t1.y, t2.y);
 
         let height = t2.y - t0.y;
         for i in 0..height {
@@ -84,14 +83,15 @@ impl Img {
             let tmp = if second_half {t1.y-t0.y} else {0};
             let beta = (i - tmp) as f32 / segment_height;
 
-            let a_vec = t0.asFloat() + (t2 - t0).asFloat() * alpha;
-            let b_vec = if second_half {
+            let a = t0.asFloat() + (t2 - t0).asFloat() * alpha;
+            let b = if second_half {
                 t1.asFloat() + (t2-t1).asFloat() * beta
             } else {
                 t0.asFloat() + (t1-t0).asFloat() * beta
             };
 
-            for x in a_vec.x as i32..b_vec.x as i32+1 {
+            let (a,b) = if a.x>b.x {(b,a)} else {(a,b)};
+            for x in a.x as i32..b.x as i32+1 {
                 self.pixel(x,t0.y+i, color);
             }
         }
