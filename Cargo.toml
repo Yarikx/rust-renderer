@@ -6,3 +6,4 @@ authors = ["Yaroslav Heriatovych <Yarikx@gmail.com>"]
 [dependencies]
 image = "*"
 num = "*"
+nalgebra = "0.10.*"

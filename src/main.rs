@@ -1,16 +1,18 @@
-//!An example of generating julia fractals.
-extern crate image;
+extern crate nalgebra as na;
 
 mod parser;
 mod render;
 
-const WIDTH: i32 = 800;
-const HEIGHT: i32 = 800;
+use render::pixel;
+use render::vec2;
+
+const WIDTH: u32 = 1800;
+const HEIGHT: u32 = 1800;
 
 fn main() {
-    let pix = image::Rgb([255, 255, 255]);
+    let pix = pixel(255, 255, 255);
 
-    let mut img = render::Img::create();
+    let mut img = render::Img::create(WIDTH, HEIGHT);
     
     match parser::parse("african_head.obj") {
         Ok(model) => {
@@ -34,6 +36,8 @@ fn main() {
         },
         Err(x) => println!("error: {}", x)
     }
+
+    img.triangle(vec2(0, 0), vec2(100, 200), vec2(200, 100), pix);
 
     img.save("out.png");
 
