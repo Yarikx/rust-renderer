@@ -45,7 +45,7 @@ fn main() {
                 let x2: Vector3<f32> = world_coords[1] - world_coords[0];
                 let n = x1.cross(&x2).normalize();
 
-                let ref light_dir = Vector3::new(0., 0., -1.).normalize();
+                let ref light_dir = Vector3::new(-0.5, -0.5, -1.).normalize();
                 let intensity = n.dot(light_dir);
 
                 if intensity > 0. {
