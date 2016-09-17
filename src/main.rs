@@ -13,8 +13,9 @@ use na::Cross;
 use na::Norm;
 use na::Dot;
 
-const WIDTH: u32 = 1800;
-const HEIGHT: u32 = 1800;
+const WIDTH: u32 = 800;
+const HEIGHT: u32 = 800;
+const DEPTH: u32 = 250;
 
 fn main() {
     let mut img = render::Img::create(WIDTH, HEIGHT);
@@ -24,6 +25,7 @@ fn main() {
             let ref vs = model.vertices;
             let w = WIDTH as f32;
             let h = HEIGHT as f32;
+            let d = DEPTH as f32;
             
             for face in &model.faces {
                 let mut screen_coords = Vec::new();
@@ -33,7 +35,8 @@ fn main() {
                     let ref vertex = vs[face.ps[i]];
                     let x = (vertex.x + 1.0) * w / 2.0;
                     let y = (vertex.y + 1.0) * h / 2.0;
-                    let vector = vec2(x as i32, y as i32);
+                    let z = (vertex.z + 1.0) * d / 2.0;
+                    let vector = Vector3::new(x as i32, y as i32, z as i32);
                     screen_coords.push(vector);
                     world_coords.push(vertex);
                 }
