@@ -14,7 +14,8 @@ use na::Vector2;
 pub struct Img {
     width: u32,
     height: u32,
-    imgbuf: Image, 
+    imgbuf: Image,
+    zbuf: Vec<Vec<i32>>,
 }
 
 trait MyVec {
@@ -30,7 +31,7 @@ impl MyVec for Vector2<i32> {
 impl Img {
     pub fn create(w: u32, h: u32) -> Img {
         let imgbuf = image::ImageBuffer::new(w, h);
-        Img{width: w, height: h, imgbuf: imgbuf}
+        Img {width: w, height: h, imgbuf: imgbuf, zbuf: vec![vec![0; w as usize]; h as usize]}
     }
 
     pub fn save(self, path: &'static str) {
@@ -92,6 +93,12 @@ impl Img {
 
             let (a,b) = if a.x>b.x {(b,a)} else {(a,b)};
             for x in a.x as i32..b.x as i32+1 {
+                let phi = if b.x == a.x {
+                    1.
+                } else {
+                    (x as f32 - a.x)/(b.x - a.x)
+                };
+                
                 self.pixel(x,t0.y+i, color);
             }
         }
