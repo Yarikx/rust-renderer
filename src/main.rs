@@ -8,7 +8,7 @@ mod render;
 use render::pixel;
 use render::vec2;
 
-//use na::Vector2;
+use na::Vector2;
 use na::Vector3;
 use na::Cross;
 use na::Norm;
@@ -33,6 +33,7 @@ fn main() {
             for face in &model.faces {
                 let mut screen_coords = Vec::new();
                 let mut world_coords = Vec::new();
+                let mut vt_coords = Vec::new();
                 
                 for i in 0..3 {
                     let ref vertex = vs[face.ps[i]];
@@ -42,6 +43,12 @@ fn main() {
                     let vector = Vector3::new(x as i32, y as i32, z as i32);
                     screen_coords.push(vector);
                     world_coords.push(vertex);
+
+                    let vt_pos = &model.vt[face.vt[i]];
+                    let texture_x = (vt_pos.x * texture.width as f32) as i32;
+                    
+                    let texture_y = (vt_pos.y * texture.width as f32) as i32;
+                    vt_coords.push(Vector2::new(texture_x, texture_y));
                 }
 
                 let x1: Vector3<f32> = world_coords[2] - world_coords[0];
@@ -54,7 +61,10 @@ fn main() {
                 if intensity > 0. {
                     let br: u8 = (intensity * 255.0) as u8;
                     let color = pixel(br, br, br);
-                    img.triangle(screen_coords[0], screen_coords[1], screen_coords[2], &texture);
+                    
+                    img.triangle(screen_coords[0], screen_coords[1], screen_coords[2],
+                                 vt_coords[0], vt_coords[1], vt_coords[2],
+                                 &texture);
                 }
             }
         },
