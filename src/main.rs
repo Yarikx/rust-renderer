@@ -45,10 +45,10 @@ fn main() {
                     world_coords.push(vertex);
 
                     let vt_pos = &model.vt[face.vt[i]];
-                    let texture_x = (vt_pos.x * texture.width as f32) as i32;
+                    let texture_x = (vt_pos.x * texture.width as f32) as u32;
                     
-                    let texture_y = (vt_pos.y * texture.width as f32) as i32;
-                    vt_coords.push(Vector2::new(texture_x, texture_y));
+                    let texture_y = (vt_pos.y * texture.width as f32) as u32;
+                    vt_coords.push(Vector2::new(texture_x, texture.height - texture_y -1));
                 }
 
                 let x1: Vector3<f32> = world_coords[2] - world_coords[0];
