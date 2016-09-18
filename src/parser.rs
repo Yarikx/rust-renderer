@@ -42,14 +42,15 @@ pub fn parse(filename: &'static str) -> io::Result<Model> {
             let mut vt = Vec::new();
             for line in file.lines() {
                 let l = line.unwrap();
-                let mut itr = l.split(" +");
-                let command = itr.next().unwrap();
+                let mut itr = l.split_whitespace();
+                let command = itr.next();
+                
                 match command {
-                    "v" => {
+                    Some("v") => {
                         let ps = itr.filter_map(|s| s.parse::<f32>().ok()).collect::<Vec<_>>();
                         vertices.push(Vector3::new(ps[0], ps[1], ps[2]))
                     },
-                    "f" => {
+                    Some("f") => {
                         let xs = itr
                             .map(|str| -> Vec<usize> {
                                 str.split("/")
@@ -69,7 +70,7 @@ pub fn parse(filename: &'static str) -> io::Result<Model> {
                             vt: vt
                         });
                     },
-                    "vt" => {
+                    Some("vt") => {
                         let x = itr.next().unwrap().parse::<f32>().unwrap();
                         let y = itr.next().unwrap().parse::<f32>().unwrap();
                         vt.push(Vector2::new(x,y));
