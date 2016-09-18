@@ -1,5 +1,6 @@
 extern crate nalgebra as na;
 extern crate rand;
+extern crate image;
 
 mod parser;
 mod render;
@@ -26,6 +27,8 @@ fn main() {
             let w = WIDTH as f32;
             let h = HEIGHT as f32;
             let d = DEPTH as f32;
+
+            let texture = parser::texture().unwrap();
             
             for face in &model.faces {
                 let mut screen_coords = Vec::new();
@@ -51,7 +54,7 @@ fn main() {
                 if intensity > 0. {
                     let br: u8 = (intensity * 255.0) as u8;
                     let color = pixel(br, br, br);
-                    img.triangle(screen_coords[0], screen_coords[1], screen_coords[2], color);
+                    img.triangle(screen_coords[0], screen_coords[1], screen_coords[2], &texture);
                 }
             }
         },

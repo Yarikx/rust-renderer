@@ -2,7 +2,7 @@ extern crate image;
 extern crate nalgebra as na;
 
 pub type Pixel = image::Rgb<u8>;
-type Image = image::RgbImage;
+pub type Image = image::RgbImage;
 
 pub type Vec2i = na::Vector2<i32>;
 pub type Vec3i = na::Vector3<i32>;
@@ -12,6 +12,8 @@ use std::path::Path;
 
 use na::Vector2;
 use na::Vector3;
+
+use parser::Texture;
 
 pub struct Img {
     width: u32,
@@ -65,7 +67,7 @@ impl Img {
         }
     }
 
-    pub fn triangle(&mut self, t0: Vec3i, t1: Vec3i, t2: Vec3i, color: Pixel) {
+    pub fn triangle(&mut self, t0: Vec3i, t1: Vec3i, t2: Vec3i, texture: &Texture) {
         if t0.y == t1.y && t1.y == t2.y {return}
         
         let (t0,t1) = if t0.y>t1.y { (t1, t0)} else { (t0, t1) };
@@ -104,7 +106,7 @@ impl Img {
                 let p = Vector3::new(p.x as i32, p.y as i32, p.z as i32);
                 if self.zbuf[p.y as usize][p.x as usize] < p.z {
                     self.zbuf[p.y as usize][p.x as usize] = p.z;
-                    self.pixel(x,t0.y+i, color);
+                    self.pixel(x,t0.y+i, pixel(255,255,255));
                 }
             }
         }
