@@ -29,7 +29,7 @@ fn main() {
             let h = HEIGHT as f32;
             let d = DEPTH as f32;
 
-            let texture = parser::texture().unwrap();
+            let texture = parser::texture("african_head_diffuse.png").unwrap();
 
             for face in &model.faces {
                 let mut screen_coords = Vec::new();

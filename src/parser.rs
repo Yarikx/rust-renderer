@@ -93,9 +93,9 @@ pub fn parse(filename: &'static str) -> io::Result<Model> {
     }   
 }
 
-pub fn texture() -> ImageResult<Texture> {
+pub fn texture(filename: &'static str) -> ImageResult<Texture> {
     println!("loading texture");
-    let reader = BufReader::new(File::open("african_head_diffuse.png").unwrap());
+    let reader = BufReader::new(File::open(filename).unwrap());
     let mut decoder = PNGDecoder::new(reader);
     let (w,h) = decoder.dimensions().unwrap();
     decoder.into_frames()
