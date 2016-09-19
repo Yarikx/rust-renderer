@@ -5,9 +5,6 @@ extern crate image;
 mod parser;
 mod render;
 
-use render::pixel;
-use render::vec2;
-
 use na::Vector2;
 use na::Vector3;
 use na::Cross;
@@ -60,9 +57,6 @@ fn main() {
                 let intensity = n.dot(light_dir);
 
                 if intensity > 0. {
-                    let br: u8 = (intensity * 255.0) as u8;
-                    let color = pixel(br, br, br);
-
                     img.triangle(screen_coords[0], screen_coords[1], screen_coords[2],
                                  vt_coords[0], vt_coords[1], vt_coords[2],
                                  &texture, intensity);
