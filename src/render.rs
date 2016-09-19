@@ -130,9 +130,8 @@ impl Img {
                 let uv = uv_a + ((uv_b - uv_a) * phi);
                 if self.zbuf[p.y as usize][p.x as usize] < p.z {
                     self.zbuf[p.y as usize][p.x as usize] = p.z;
-                    let uv_pixel = texture.get_pixel(uv.x as u32, uv.y as u32);
-
-                    let z = p.z as u8;
+                    let uv_pixel = texture.get_pixel(uv.x as u32, uv.y as u32)
+                        .map(|c| (c as f32 * intensity) as u8);
                     self.pixel(x, t0.y + i, uv_pixel);
                 }
             }
