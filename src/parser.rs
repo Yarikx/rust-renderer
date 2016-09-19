@@ -35,14 +35,14 @@ pub struct Texture {
 
 impl Texture {
     pub fn get_pixel(&self, x: u32, y: u32) -> image::Rgb<u8> {
-        if x >= self.width || y > self.height {return image::Rgb([255,255,255])};
+        if x >= self.width || y > self.height { return image::Rgb([255, 255, 255]) };
         self.image.get_pixel(x, self.height - y - 1).to_rgb()
     }
 }
 
-pub fn parse(filename: &'static str) -> io::Result<Model> {   
+pub fn parse(filename: &'static str) -> io::Result<Model> {
     let x = File::open(filename)
-        .map(|file|  BufReader::new(file) );
+        .map(|file| BufReader::new(file));
 
     return match x {
         Ok(file) => {
@@ -53,7 +53,7 @@ pub fn parse(filename: &'static str) -> io::Result<Model> {
                 let l = line.unwrap();
                 let mut itr = l.split_whitespace();
                 let command = itr.next();
-                
+
                 match command {
                     Some("v") => {
                         let ps = itr.filter_map(|s| s.parse::<f32>().ok()).collect::<Vec<_>>();
@@ -68,13 +68,13 @@ pub fn parse(filename: &'static str) -> io::Result<Model> {
                                     .collect::<Vec<_>>()
                             });
 
-                        let mut ps: [usize; 3] = [0,0,0];
-                        let mut vt: [usize; 3] = [0,0,0];
+                        let mut ps: [usize; 3] = [0, 0, 0];
+                        let mut vt: [usize; 3] = [0, 0, 0];
                         for (i, x) in xs.enumerate() {
                             ps[i] = x[0];
                             vt[i] = x[1];
                         }
-                        faces.push( Face {
+                        faces.push(Face {
                             ps: ps,
                             vt: vt
                         });
@@ -82,26 +82,40 @@ pub fn parse(filename: &'static str) -> io::Result<Model> {
                     Some("vt") => {
                         let x = itr.next().unwrap().parse::<f32>().unwrap();
                         let y = itr.next().unwrap().parse::<f32>().unwrap();
-                        vt.push(Vector2::new(x,y));
+                        vt.push(Vector2::new(x, y));
                     }
                     _ => {}
                 }
             }
-            Ok(Model {vertices: vertices, faces: faces, vt: vt})
+            Ok(Model { vertices: vertices, faces: faces, vt: vt })
         },
         Err(x) => Err(x)
-    }   
+    }
+}
+
+fn both<A, B, E>(a: Result<A, E>, b: Result<B, E>) -> Result<(A, B), E> {
+    a.and_then(|a| b.map(|b| (a, b)))
 }
 
 pub fn texture(filename: &'static str) -> ImageResult<Texture> {
     println!("loading texture");
-    let reader = BufReader::new(File::open(filename).unwrap());
-    let mut decoder = PNGDecoder::new(reader);
-    let (w,h) = decoder.dimensions().unwrap();
-    decoder.into_frames()
-        .map(|mut frames| frames.next().unwrap())
-        .map(|frame| frame.into_buffer())
-        .map(|buffer| {
+    File::open(filename)
+        .map(|file| BufReader::new(file))
+        .map(|reader| PNGDecoder::new(reader))
+        .map_err(|e| image::ImageError::from(e))
+        .and_then(|mut decoder| {
+            let dimenstions = decoder.dimensions();
+            let frame = decoder.into_frames()
+                .and_then(|mut frames| {
+                    frames.next()
+                        .ok_or(image::ImageError::from(io::Error::new(io::ErrorKind::NotFound, "no frames found for texture")))
+                });
+            both(dimenstions, frame)
+        })
+        .map(|(dimensions, frame)| {
+            let (w, h) = dimensions;
+            let buffer = frame.into_buffer();
+
             println!("texture loaded");
             Texture {
                 width: w,
@@ -110,3 +124,4 @@ pub fn texture(filename: &'static str) -> ImageResult<Texture> {
             }
         })
 }
+
