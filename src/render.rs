@@ -26,11 +26,11 @@ pub struct Img {
 }
 
 trait MyVec {
-    fn as_float(self) -> Vector3<f32>;
+    fn as_float(&self) -> Vector3<f32>;
 }
 
 impl MyVec for Vector3<i32> {
-    fn as_float(self) -> Vector3<f32> {
+    fn as_float(&self) -> Vector3<f32> {
         Vector3::new(self.x as f32, self.y as f32, self.z as f32)
     }
 }
@@ -77,12 +77,12 @@ impl Img {
 
     pub fn triangle(&mut self, t0: Vec3i, t1: Vec3i, t2: Vec3i,
                     uv0: Vec2u, uv1: Vec2u, uv2: Vec2u,
-                    texture: &Texture) {
+                    texture: &Texture, intensity: f32) {
         if t0.y == t1.y && t1.y == t2.y { return }
 
-        let (t0, t1) = if t0.y > t1.y { (t1, t0) } else { (t0, t1) };
-        let (t0, t2) = if t0.y > t2.y { (t2, t0) } else { (t0, t2) };
-        let (t1, t2) = if t1.y > t2.y { (t2, t1) } else { (t1, t2) };
+        let (t0, t1, uv0, uv1) = if t0.y > t1.y { (t1, t0, uv1, uv0) } else { (t0, t1, uv0, uv1) };
+        let (t0, t2, uv0, uv2) = if t0.y > t2.y { (t2, t0, uv2, uv0) } else { (t0, t2, uv0, uv2) };
+        let (t1, t2, uv1, uv2) = if t1.y > t2.y { (t2, t1, uv2, uv1) } else { (t1, t2, uv1, uv2) };
 
         let height = t2.y - t0.y;
         for i in 0..height {
@@ -113,7 +113,11 @@ impl Img {
                 uv0 + (uv1 - uv0) * beta
             };
 
-            let (a, b) = if a.x > b.x { (b, a) } else { (a, b) };
+            let (a, b, uv_a, uv_b) = if a.x > b.x {
+                (b, a, uv_b, uv_a)
+            } else {
+                (a, b, uv_a, uv_b)
+            };
             for x in a.x as i32..b.x as i32 + 1 {
                 let phi = if b.x == a.x {
                     1.
@@ -126,8 +130,10 @@ impl Img {
                 let uv = uv_a + ((uv_b - uv_a) * phi);
                 if self.zbuf[p.y as usize][p.x as usize] < p.z {
                     self.zbuf[p.y as usize][p.x as usize] = p.z;
-                    let pixel = texture.get_pixel(uv.x as u32, uv.y as u32);
-                    self.pixel(x, t0.y + i, pixel);
+                    let uv_pixel = texture.get_pixel(uv.x as u32, uv.y as u32);
+
+                    let z = p.z as u8;
+                    self.pixel(x, t0.y + i, uv_pixel);
                 }
             }
         }

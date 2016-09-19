@@ -24,6 +24,7 @@ fn main() {
     match parser::parse("african_head.obj") {
         Ok(model) => {
             let ref vs = model.vertices;
+            let ref vt = model.vt;
             let w = WIDTH as f32;
             let h = HEIGHT as f32;
             let d = DEPTH as f32;
@@ -44,10 +45,10 @@ fn main() {
                     screen_coords.push(vector);
                     world_coords.push(vertex);
 
-                    let vt_pos = &model.vt[face.vt[i]];
+                    let vt_pos = vt[face.vt[i]];
                     let texture_x = (vt_pos.x * texture.width as f32) as u32;
 
-                    let texture_y = (vt_pos.y * texture.width as f32) as u32;
+                    let texture_y = (vt_pos.y * texture.height as f32) as u32;
                     vt_coords.push(Vector2::new(texture_x, texture_y));
                 }
 
@@ -64,13 +65,15 @@ fn main() {
 
                     img.triangle(screen_coords[0], screen_coords[1], screen_coords[2],
                                  vt_coords[0], vt_coords[1], vt_coords[2],
-                                 &texture);
+                                 &texture, intensity);
                 }
             }
 
 
-            img.triangle(Vector3::new(0, 0, 0), Vector3::new(500, 300, 0), Vector3::new(300, 500, 0),
-                         Vector2::new(0, 0), Vector2::new(500, 300), Vector2::new(300, 500), &texture);
+//            img.triangle(Vector3::new(0, 0, 100), Vector3::new(WIDTH as i32 - 1, 0, 100), Vector3::new(0, HEIGHT as i32 - 1, 100),
+//                         Vector2::new(0, 0), Vector2::new(texture.width - 1, 0), Vector2::new(0, texture.height - 1), &texture, 1.);
+//            img.triangle(Vector3::new(WIDTH as i32 - 1, HEIGHT as i32 - 1, 100), Vector3::new(WIDTH as i32 - 1, 0, 100), Vector3::new(0, HEIGHT as i32 - 1, 100),
+//                         Vector2::new(texture.width - 1, texture.height - 1), Vector2::new(texture.width - 1, 0), Vector2::new(0, texture.height - 1), &texture, 1.);
         },
         Err(x) => println!("error: {}", x)
     }

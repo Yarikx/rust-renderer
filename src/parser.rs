@@ -35,6 +35,7 @@ pub struct Texture {
 
 impl Texture {
     pub fn get_pixel(&self, x: u32, y: u32) -> image::Rgb<u8> {
+        if x >= self.width || y > self.height {return image::Rgb([255,255,255])};
         self.image.get_pixel(x, self.height - y - 1).to_rgb()
     }
 }
