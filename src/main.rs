@@ -29,12 +29,12 @@ fn main() {
             let d = DEPTH as f32;
 
             let texture = parser::texture().unwrap();
-            
+
             for face in &model.faces {
                 let mut screen_coords = Vec::new();
                 let mut world_coords = Vec::new();
                 let mut vt_coords = Vec::new();
-                
+
                 for i in 0..3 {
                     let ref vertex = vs[face.ps[i]];
                     let x = (vertex.x + 1.0) * w / 2.0;
@@ -46,27 +46,31 @@ fn main() {
 
                     let vt_pos = &model.vt[face.vt[i]];
                     let texture_x = (vt_pos.x * texture.width as f32) as u32;
-                    
+
                     let texture_y = (vt_pos.y * texture.width as f32) as u32;
-                    vt_coords.push(Vector2::new(texture_x, texture.height - texture_y -1));
+                    vt_coords.push(Vector2::new(texture_x, texture_y));
                 }
 
                 let x1: Vector3<f32> = world_coords[2] - world_coords[0];
                 let x2: Vector3<f32> = world_coords[1] - world_coords[0];
                 let n = x1.cross(&x2).normalize();
 
-                let ref light_dir = Vector3::new(-0.5, -0.5, -1.).normalize();
+                let ref light_dir = Vector3::new(-0., 0., -1.).normalize();
                 let intensity = n.dot(light_dir);
 
                 if intensity > 0. {
                     let br: u8 = (intensity * 255.0) as u8;
                     let color = pixel(br, br, br);
-                    
+
                     img.triangle(screen_coords[0], screen_coords[1], screen_coords[2],
                                  vt_coords[0], vt_coords[1], vt_coords[2],
                                  &texture);
                 }
             }
+
+
+            img.triangle(Vector3::new(0, 0, 0), Vector3::new(500, 300, 0), Vector3::new(300, 500, 0),
+                         Vector2::new(0, 0), Vector2::new(500, 300), Vector2::new(300, 500), &texture);
         },
         Err(x) => println!("error: {}", x)
     }

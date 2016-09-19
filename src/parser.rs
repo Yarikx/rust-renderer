@@ -14,6 +14,8 @@ use image::ImageDecoder;
 use image::RgbaImage;
 use image::ImageResult;
 
+use image::Pixel;
+
 pub struct Face {
     pub ps: [usize; 3],
     pub vt: [usize; 3],
@@ -29,6 +31,12 @@ pub struct Texture {
     pub width: u32,
     pub height: u32,
     pub image: RgbaImage,
+}
+
+impl Texture {
+    pub fn get_pixel(&self, x: u32, y: u32) -> image::Rgb<u8> {
+        self.image.get_pixel(x, self.height - y - 1).to_rgb()
+    }
 }
 
 pub fn parse(filename: &'static str) -> io::Result<Model> {   
@@ -93,6 +101,7 @@ pub fn texture() -> ImageResult<Texture> {
         .map(|mut frames| frames.next().unwrap())
         .map(|frame| frame.into_buffer())
         .map(|buffer| {
+            println!("texture loaded");
             Texture {
                 width: w,
                 height: h,
