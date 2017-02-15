@@ -62,17 +62,12 @@ fn main() {
                                  &texture, intensity);
                 }
             }
-
-
-//            img.triangle(Vector3::new(0, 0, 100), Vector3::new(WIDTH as i32 - 1, 0, 100), Vector3::new(0, HEIGHT as i32 - 1, 100),
-//                         Vector2::new(0, 0), Vector2::new(texture.width - 1, 0), Vector2::new(0, texture.height - 1), &texture, 1.);
-//            img.triangle(Vector3::new(WIDTH as i32 - 1, HEIGHT as i32 - 1, 100), Vector3::new(WIDTH as i32 - 1, 0, 100), Vector3::new(0, HEIGHT as i32 - 1, 100),
-//                         Vector2::new(texture.width - 1, texture.height - 1), Vector2::new(texture.width - 1, 0), Vector2::new(0, texture.height - 1), &texture, 1.);
         },
         Err(x) => println!("error: {}", x)
     }
 
-    img.save("out.png");
-
-    println!("done!");
+    match img.save("out.png") {
+        Ok(_) => println!("done!"),
+        Err(x) => println!("error: {}", x)
+    }
 }

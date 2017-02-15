@@ -45,10 +45,11 @@ impl Img {
         Img { width: w, height: h, imgbuf: imgbuf, zbuf: vec![vec![0; w as usize]; h as usize] }
     }
 
-    pub fn save(self, path: &'static str) {
+    pub fn save(self, path: &'static str) -> image::ImageResult<()>{
         let buf = image::imageops::rotate180(&self.imgbuf);
-        let ref mut fout = File::create(&Path::new(path)).unwrap();
-        let _ = image::ImageRgb8(buf).save(fout, image::PNG);
+        File::create(&Path::new(path))
+            .map_err(|e| image::ImageError::from(e))
+            .and_then(|ref mut file| image::ImageRgb8(buf).save(file, image::PNG))
     }
 
     pub fn pixel(&mut self, x: i32, y: i32, color: Pixel) {
