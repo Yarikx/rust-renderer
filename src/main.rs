@@ -6,6 +6,10 @@ mod parser;
 mod render;
 mod utils;
 
+use parser::Model;
+use parser::Texture;
+use render::Img;
+
 use na::Vector2;
 use na::Vector3;
 use na::Cross;
@@ -33,7 +37,7 @@ fn main() {
     }
 }
 
-fn render_all(model: &parser::Model, texture: &parser::Texture, img: &mut render::Img) {
+fn render_all(model: &Model, texture: &Texture, img: &mut Img) {
     let ref vs = model.vertices;
     let ref vt = model.vt;
     let w = WIDTH as f32;

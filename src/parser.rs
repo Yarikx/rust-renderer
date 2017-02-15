@@ -18,8 +18,11 @@ use image::Pixel;
 
 use utils::both;
 
+/// Triangle plane
 pub struct Face {
+    /// indexes of coordinate 3d vertices
     pub ps: [usize; 3],
+    /// indexes of texture 2d positions
     pub vt: [usize; 3],
 }
 
@@ -29,6 +32,7 @@ pub struct Model {
     pub vt: Vec<Vector2<f32>>
 }
 
+/// Represent image in memory with defined with and height
 pub struct Texture {
     pub width: u32,
     pub height: u32,
@@ -43,15 +47,13 @@ impl Texture {
 }
 
 pub fn parse(filename: &'static str) -> io::Result<Model> {
-    let x = File::open(filename)
-        .map(|file| BufReader::new(file));
-
-    return match x {
-        Ok(file) => {
+    File::open(filename)
+        .map(|file| {
+            let reader = BufReader::new(file);
             let mut vertices = Vec::new();
             let mut faces = Vec::new();
             let mut vt = Vec::new();
-            for line in file.lines() {
+            for line in reader.lines() {
                 let l = line.unwrap();
                 let mut itr = l.split_whitespace();
                 let command = itr.next();
@@ -89,10 +91,8 @@ pub fn parse(filename: &'static str) -> io::Result<Model> {
                     _ => {}
                 }
             }
-            Ok(Model { vertices: vertices, faces: faces, vt: vt })
-        },
-        Err(x) => Err(x)
-    }
+            Model { vertices: vertices, faces: faces, vt: vt }
+        })
 }
 
 pub fn texture(filename: &'static str) -> ImageResult<Texture> {
