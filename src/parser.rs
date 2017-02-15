@@ -16,6 +16,8 @@ use image::ImageResult;
 
 use image::Pixel;
 
+use utils::both;
+
 pub struct Face {
     pub ps: [usize; 3],
     pub vt: [usize; 3],
@@ -91,10 +93,6 @@ pub fn parse(filename: &'static str) -> io::Result<Model> {
         },
         Err(x) => Err(x)
     }
-}
-
-fn both<A, B, E>(a: Result<A, E>, b: Result<B, E>) -> Result<(A, B), E> {
-    a.and_then(|a| b.map(|b| (a, b)))
 }
 
 pub fn texture(filename: &'static str) -> ImageResult<Texture> {

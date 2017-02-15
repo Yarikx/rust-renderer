@@ -4,6 +4,7 @@ extern crate image;
 
 mod parser;
 mod render;
+mod utils;
 
 use na::Vector2;
 use na::Vector3;

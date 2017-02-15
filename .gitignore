@@ -2,4 +2,6 @@ target
 out.png
 .idea/
 .DS_Store
+*.iml
+
 
