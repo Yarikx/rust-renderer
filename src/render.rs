@@ -6,7 +6,6 @@ pub type Image = image::RgbImage;
 
 use image::Pixel as IPixel;
 
-pub type Vec2i = na::Vector2<i32>;
 pub type Vec2u = na::Vector2<u32>;
 pub type Vec3i = na::Vector3<i32>;
 
@@ -58,6 +57,7 @@ impl Img {
         }
     }
 
+    #[allow(dead_code)]
     pub fn line(&mut self, x0: i32, y0: i32, x1: i32, y1: i32, color: Pixel) {
         if (x1 - x0).abs() > (y1 - y0).abs() {
             let range = if x1 > x0 { x0..x1 } else { x1..x0 };
@@ -140,11 +140,8 @@ impl Img {
     }
 }
 
+#[allow(dead_code)]
 pub fn pixel(r: u8, g: u8, b: u8) -> Pixel {
     image::Rgb([r, g, b])
-}
-
-pub fn vec2(x: i32, y: i32) -> Vec2i {
-    Vector2 { x: x, y: y }
 }
 
