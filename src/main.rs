@@ -29,6 +29,7 @@ fn main() {
             parser::texture("african_head_diffuse.png")
             .map(|texture| (model, texture)))
         .map(|(model, texture)| render_all(&model, &texture, &mut img))
+        .and_then(|_| img.save_zbuf("out_zbuf.png"))
         .and_then(|_| img.save("out.png"));
 
     match result {

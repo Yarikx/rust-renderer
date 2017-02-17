@@ -1,5 +1,6 @@
 target
 out.png
+out_zbuf.png
 .idea/
 .DS_Store
 *.iml

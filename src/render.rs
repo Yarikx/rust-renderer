@@ -21,7 +21,7 @@ pub struct Img {
     width: u32,
     height: u32,
     imgbuf: Image,
-    zbuf: Vec<Vec<i32>>,
+    zbuf: image::GrayImage,
 }
 
 trait MyVec {
@@ -41,14 +41,22 @@ fn as_float(v: Vec2u) -> Vector2<f32> {
 impl Img {
     pub fn create(w: u32, h: u32) -> Img {
         let imgbuf = image::ImageBuffer::new(w, h);
-        Img { width: w, height: h, imgbuf: imgbuf, zbuf: vec![vec![0; w as usize]; h as usize] }
+        let zbuf = image::ImageBuffer::new(w, h);
+        Img { width: w, height: h, imgbuf: imgbuf, zbuf: zbuf }
     }
 
-    pub fn save(self, path: &'static str) -> image::ImageResult<()>{
+    pub fn save(&self, path: &'static str) -> image::ImageResult<()>{
         let buf = image::imageops::rotate180(&self.imgbuf);
         File::create(&Path::new(path))
             .map_err(|e| image::ImageError::from(e))
             .and_then(|ref mut file| image::ImageRgb8(buf).save(file, image::PNG))
+    }
+
+    pub fn save_zbuf(&self, path: &'static str) -> image::ImageResult<()> {
+        let buf = image::imageops::rotate180(&self.zbuf);
+        File::create(&Path::new(path))
+            .map_err(|e| image::ImageError::from(e))
+            .and_then(|ref mut file| image::ImageLuma8(buf).save(file, image::PNG))
     }
 
     pub fn pixel(&mut self, x: i32, y: i32, color: Pixel) {
@@ -129,8 +137,10 @@ impl Img {
                 let p = Vector3::new(p.x as i32, p.y as i32, p.z as i32);
 
                 let uv = uv_a + ((uv_b - uv_a) * phi);
-                if self.zbuf[p.y as usize][p.x as usize] < p.z {
-                    self.zbuf[p.y as usize][p.x as usize] = p.z;
+                let z = self.zbuf.get_pixel(p.x as u32, p.y as u32).channels()[0];
+                let pz = p.z as u8;
+                if z < pz {
+                    self.zbuf.put_pixel(p.x as u32, p.y as u32, image::Luma([pz]));
                     let uv_pixel = texture.get_pixel(uv.x as u32, uv.y as u32)
                         .map(|c| (c as f32 * intensity) as u8);
                     self.pixel(x, t0.y + i, uv_pixel);
