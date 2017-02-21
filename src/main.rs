@@ -12,9 +12,9 @@ use render::Img;
 
 use na::Vector2;
 use na::Vector3;
-use na::Cross;
-use na::Norm;
-use na::Dot;
+//use na::Cross;
+//use na::Norm;
+//use na::Dot;
 
 const WIDTH: u32 = 800;
 const HEIGHT: u32 = 800;
@@ -92,13 +92,14 @@ fn render_all(model: &Model, texture: &Texture, img: &mut Img) {
 }
 
 fn project(v: &Vector3<f32>) -> Vector3<f32> {
+
     let foobar = |a| {
         a / (1. - v.z / 3.)
     };
-    Vector3 {
-        x: foobar(v.x * 0.5),
-        y: foobar(v.y * 0.5),
-        z: v.z,
-    }
+    Vector3::new(
+        foobar(v.x * 0.5),
+        foobar(v.y * 0.5),
+        v.z,
+    )
 }
 
