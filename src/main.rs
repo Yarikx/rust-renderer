@@ -66,7 +66,7 @@ fn render_all(model: &Model, texture: &Texture, img: &mut Img) {
         for i in 0..3 {
             let ref vertex = vs[face.ps[i]];
 
-            let vector = to_screen_coord(vertex);
+            let vector = to_screen_coord(&project(vertex));
             screen_coords.push(vector);
             world_coords.push(vertex);
 
@@ -88,6 +88,17 @@ fn render_all(model: &Model, texture: &Texture, img: &mut Img) {
                          vt_coords[0], vt_coords[1], vt_coords[2],
                          &texture, intensity);
         }
+    }
+}
+
+fn project(v: &Vector3<f32>) -> Vector3<f32> {
+    let foobar = |a| {
+        a / (1. - v.z / 3.)
+    };
+    Vector3 {
+        x: foobar(v.x * 0.5),
+        y: foobar(v.y * 0.5),
+        z: v.z,
     }
 }
 
