@@ -16,6 +16,7 @@ use na::Vector2;
 use na::Vector3;
 
 use parser::Texture;
+use std::mem::swap;
 
 pub struct Img {
     width: u32,
@@ -45,7 +46,7 @@ impl Img {
         Img { width: w, height: h, imgbuf: imgbuf, zbuf: zbuf }
     }
 
-    pub fn save(&self, path: &'static str) -> image::ImageResult<()>{
+    pub fn save(&self, path: &'static str) -> image::ImageResult<()> {
         let buf = image::imageops::rotate180(&self.imgbuf);
         File::create(&Path::new(path))
             .map_err(|e| image::ImageError::from(e))
@@ -87,21 +88,31 @@ impl Img {
     pub fn triangle(&mut self, t0: Vec3i, t1: Vec3i, t2: Vec3i,
                     uv0: Vec2u, uv1: Vec2u, uv2: Vec2u,
                     texture: &Texture, intensity: f32) {
-        if t0.y == t1.y && t1.y == t2.y { return }
+        if t0.y == t1.y && t1.y == t2.y { return; }
 
-        let (t0, t1, uv0, uv1) = if t0.y > t1.y { (t1, t0, uv1, uv0) } else { (t0, t1, uv0, uv1) };
-        let (t0, t2, uv0, uv2) = if t0.y > t2.y { (t2, t0, uv2, uv0) } else { (t0, t2, uv0, uv2) };
-        let (t1, t2, uv1, uv2) = if t1.y > t2.y { (t2, t1, uv2, uv1) } else { (t1, t2, uv1, uv2) };
+        let (mut t0, mut t1, mut t2, mut uv0, mut uv1, mut uv2) = (t0, t1, t2, uv0, uv1, uv2);
+        if t0.y > t1.y {
+            swap(&mut t0, &mut t1);
+            swap(&mut uv1, &mut uv0);
+        }
+        if t0.y > t2.y {
+            swap(&mut t0, &mut t2);
+            swap(&mut uv0, &mut uv2);
+        }
+        if t1.y > t2.y {
+            swap(&mut t1, &mut t2);
+            swap(&mut uv1, &mut uv2);
+        }
 
         let height = t2.y - t0.y;
         for i in 0..height {
             let second_half = i > t1.y - t0.y || t1.y == t0.y;
             let segment_height =
-            if second_half {
-                t2.y - t1.y
-            } else {
-                t1.y - t0.y
-            } as f32;
+                if second_half {
+                    t2.y - t1.y
+                } else {
+                    t1.y - t0.y
+                } as f32;
 
             let alpha = i as f32 / height as f32;
             let tmp = if second_half { t1.y - t0.y } else { 0 };
